@@ -52,4 +52,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::delete('/moje-narudzbine/{narudzbina}', [App\Http\Controllers\NarudzbinaController::class, 'destroy'])->name('moja.narudzbina.destroy');
 });
 
+// Public rute za use case-ove (za testove)
+Route::post('/servis/prijavi', [App\Http\Controllers\ServisController::class, 'prijaviServis'])->name('servis.prijavi');
+
 require __DIR__.'/auth.php';

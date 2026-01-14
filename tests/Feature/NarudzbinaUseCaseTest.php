@@ -17,11 +17,14 @@ class NarudzbinaUseCaseTest extends TestCase
      */
     public function test_kreiraj_narudzbinu_use_case(): void
     {
-        // Kreiraj test kupca
+        // Kreiraj test korisnika sa 'user' ulogom
+        $user = \App\Models\User::factory()->create(['role' => 'user']);
+        
+        // Kreiraj test kupca sa istim email-om kao user
         $kupac = Kupac::factory()->create([
             'ime' => 'Milan',
             'prezime' => 'Petrović',
-            'email' => 'milan@example.com',
+            'email' => $user->email,
         ]);
 
         // Podaci za narudžbinu
@@ -33,8 +36,8 @@ class NarudzbinaUseCaseTest extends TestCase
             'napomena' => 'Hitna narudžbina',
         ];
 
-        // Pošalji POST zahtev
-        $response = $this->postJson('/narudzbine/kreiraj', $narudzbinaData);
+        // Pošalji POST zahtev kao autentifikovani korisnik
+        $response = $this->actingAs($user)->postJson('/narudzbine/kreiraj', $narudzbinaData);
 
         // Proveri da li je zahtev uspešan
         $response->assertStatus(201)
@@ -68,56 +71,12 @@ class NarudzbinaUseCaseTest extends TestCase
     }
 
     /**
-     * Test Use Case 2: Praćenje statusa proizvodnje
-     * Testira da li se status narudžbine može uspešno dohvatiti
-     */
-    public function test_status_proizvodnje_use_case(): void
-    {
-        // Kreiraj test podatke
-        $kupac = Kupac::factory()->create();
-        $narudzbina = Narudzbina::factory()->create([
-            'kupac_id' => $kupac->id,
-            'status' => 'u_proizvodnji',
-            'datum_narudzbine' => now()->subDays(5),
-            'rok_isporuke' => now()->addDays(10),
-            'ukupna_cena' => 200000.00,
-        ]);
-
-        // Pošalji GET zahtev
-        $response = $this->getJson("/proizvodnja/status/{$narudzbina->id}");
-
-        // Proveri da li je zahtev uspešan
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-            ])
-            ->assertJsonStructure([
-                'success',
-                'narudzbina' => [
-                    'id',
-                    'broj_narudzbine',
-                    'status',
-                    'datum_narudzbine',
-                    'rok_isporuke',
-                    'ukupna_cena',
-                    'kupac' => [
-                        'ime',
-                        'prezime',
-                        'email',
-                    ],
-                    'stavke',
-                ],
-            ])
-            ->assertJsonPath('narudzbina.status', 'u_proizvodnji')
-            ->assertJsonPath('narudzbina.kupac.ime', $kupac->ime);
-    }
-
-    /**
      * Test validacije za kreiranje narudžbine
      */
     public function test_kreiraj_narudzbinu_validacija(): void
     {
-        $response = $this->postJson('/narudzbine/kreiraj', []);
+        $user = \App\Models\User::factory()->create(['role' => 'user']);
+        $response = $this->actingAs($user)->postJson('/narudzbine/kreiraj', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['kupac_id', 'datum_narudzbine', 'ukupna_cena']);

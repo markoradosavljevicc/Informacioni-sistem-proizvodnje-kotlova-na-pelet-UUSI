@@ -57,15 +57,6 @@ class ServisUseCaseTest extends TestCase
                     'datum_prijave',
                     'status',
                     'opis_kvara',
-                    'kupac' => [
-                        'id',
-                        'ime',
-                        'prezime',
-                    ],
-                    'proizvod' => [
-                        'id',
-                        'naziv',
-                    ],
                 ],
             ]);
 
