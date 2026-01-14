@@ -130,11 +130,11 @@ class ProizvodController extends Controller
     public function naruci(Proizvod $proizvod): View
     {
         $user = auth()->user();
-        
+
         // Pronađi ili kreiraj kupca na osnovu user-a
         $kupac = Kupac::where('email', $user->email)->first();
-        
-        if (!$kupac) {
+
+        if (! $kupac) {
             // Ako kupac ne postoji, kreiraj ga na osnovu user podataka
             $kupac = Kupac::create([
                 'ime' => explode(' ', $user->name)[0] ?? $user->name,
@@ -152,17 +152,17 @@ class ProizvodController extends Controller
     public function kreirajNarudzbinu(Request $request, Proizvod $proizvod): RedirectResponse
     {
         $validated = $request->validate([
-            'kolicina' => 'required|integer|min:1|max:' . $proizvod->na_stanju,
+            'kolicina' => 'required|integer|min:1|max:'.$proizvod->na_stanju,
             'rok_isporuke' => 'nullable|date|after:today',
             'napomena' => 'nullable|string|max:1000',
         ]);
 
         $user = auth()->user();
-        
+
         // Pronađi ili kreiraj kupca
         $kupac = Kupac::where('email', $user->email)->first();
-        
-        if (!$kupac) {
+
+        if (! $kupac) {
             $kupac = Kupac::create([
                 'ime' => explode(' ', $user->name)[0] ?? $user->name,
                 'prezime' => explode(' ', $user->name)[1] ?? '',
@@ -172,7 +172,7 @@ class ProizvodController extends Controller
 
         // Kreiraj narudžbinu
         $ukupna_cena = $proizvod->cena * $validated['kolicina'];
-        
+
         $narudzbina = Narudzbina::create([
             'kupac_id' => $kupac->id,
             'datum_narudzbine' => now()->toDateString(),
@@ -191,6 +191,6 @@ class ProizvodController extends Controller
         ]);
 
         return redirect()->route('proizvods.index')
-            ->with('success', 'Narudžbina je uspešno kreirana! Broj narudžbine: #' . $narudzbina->id);
+            ->with('success', 'Narudžbina je uspešno kreirana! Broj narudžbine: #'.$narudzbina->id);
     }
 }

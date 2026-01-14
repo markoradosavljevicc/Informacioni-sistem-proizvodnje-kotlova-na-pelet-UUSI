@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Narudzbina;
 use App\Models\Kupac;
+use App\Models\Narudzbina;
 use App\Models\Proizvod;
 use App\Models\Servis;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
@@ -19,7 +18,7 @@ class DashboardController extends Controller
     public function index(): View
     {
         $user = auth()->user();
-        
+
         // Ako je direktor, pripremi podatke za grafike
         if ($user->isDirektor()) {
             // Prihodi po mesecima (poslednjih 6 meseci) - SQLite kompatibilno
@@ -32,28 +31,28 @@ class DashboardController extends Controller
             foreach ($narudzbine as $narudzbina) {
                 $date = Carbon::parse($narudzbina->datum_narudzbine);
                 $key = $date->format('Y-m');
-                
-                if (!isset($prihodiPoMesecima[$key])) {
+
+                if (! isset($prihodiPoMesecima[$key])) {
                     $prihodiPoMesecima[$key] = [
                         'godina' => $date->year,
                         'mesec' => $date->month,
-                        'ukupno' => 0
+                        'ukupno' => 0,
                     ];
                 }
-                
-                $prihodiPoMesecima[$key]['ukupno'] += (float)$narudzbina->ukupna_cena;
+
+                $prihodiPoMesecima[$key]['ukupno'] += (float) $narudzbina->ukupna_cena;
             }
 
             // Formatiraj podatke za Chart.js
             $mesecLabels = [];
             $prihodiData = [];
-            
+
             for ($i = 5; $i >= 0; $i--) {
                 $date = Carbon::now()->subMonths($i);
                 $key = $date->format('Y-m');
                 $mesecLabels[] = $date->format('M Y');
-                
-                $prihodiData[] = isset($prihodiPoMesecima[$key]) ? (float)$prihodiPoMesecima[$key]['ukupno'] : 0;
+
+                $prihodiData[] = isset($prihodiPoMesecima[$key]) ? (float) $prihodiPoMesecima[$key]['ukupno'] : 0;
             }
 
             // Narudžbine po statusu
@@ -65,7 +64,7 @@ class DashboardController extends Controller
                 return ucfirst($status);
             })->toArray();
             $statusData = $narudzbinePoStatusu->pluck('broj')->toArray();
-            
+
             // Mapiranje boja po statusu
             $colorMap = [
                 'kreirana' => 'rgba(59, 130, 246, 0.8)',   // plava
@@ -73,7 +72,7 @@ class DashboardController extends Controller
                 'isporučena' => 'rgba(34, 197, 94, 0.8)',  // zelena
                 'otkazana' => 'rgba(239, 68, 68, 0.8)',     // crvena
             ];
-            
+
             $statusColors = $narudzbinePoStatusu->pluck('status')->map(function ($status) use ($colorMap) {
                 return $colorMap[strtolower($status)] ?? 'rgba(156, 163, 175, 0.8)'; // siva za nepoznate
             })->toArray();

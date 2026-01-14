@@ -9,8 +9,8 @@ use App\Models\Narudzbina;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class NarudzbinaController extends Controller
 {
@@ -95,7 +95,7 @@ class NarudzbinaController extends Controller
         // Proveri da li je user vlasnik narudžbine
         if (Auth::user()->hasRole('user')) {
             $kupac = Kupac::where('email', Auth::user()->email)->first();
-            if (!$kupac || $narudzbina->kupac_id !== $kupac->id) {
+            if (! $kupac || $narudzbina->kupac_id !== $kupac->id) {
                 abort(403, 'Nemate dozvolu da obrišete ovu narudžbinu.');
             }
         }
@@ -150,7 +150,7 @@ class NarudzbinaController extends Controller
         $user = Auth::user();
         $kupac = Kupac::where('email', $user->email)->first();
 
-        if (!$kupac) {
+        if (! $kupac) {
             $narudzbine = collect(); // Prazna kolekcija
         } else {
             $narudzbine = Narudzbina::where('kupac_id', $kupac->id)
@@ -171,7 +171,7 @@ class NarudzbinaController extends Controller
         $kupac = Kupac::where('email', $user->email)->first();
 
         // Proveri da li je user vlasnik narudžbine
-        if (!$kupac || $narudzbina->kupac_id !== $kupac->id) {
+        if (! $kupac || $narudzbina->kupac_id !== $kupac->id) {
             abort(403, 'Nemate dozvolu da pristupite ovoj narudžbini.');
         }
 

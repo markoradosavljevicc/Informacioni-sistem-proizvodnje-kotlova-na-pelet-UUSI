@@ -17,7 +17,7 @@ class ProizvodFactory extends Factory
             'GreenFlame', 'EcoBurn', 'BioMaster', 'ThermoGreen', 'EcoStar', 'BioHeat',
             'GreenMax', 'EcoPro', 'BioTherm Pro', 'ThermoFlame', 'EcoMaster', 'BioStar',
             'GreenPro', 'EcoTherm', 'BioMax', 'ThermoEco Pro', 'EcoPower', 'BioFlame',
-            'GreenMaster', 'EcoHeat', 'BioPro', 'ThermoMax', 'EcoBurn Pro', 'BioStar Pro'
+            'GreenMaster', 'EcoHeat', 'BioPro', 'ThermoMax', 'EcoBurn Pro', 'BioStar Pro',
         ];
 
         $serije = ['Classic', 'Premium', 'Elite', 'Pro', 'Plus', 'Ultra', 'Advanced', 'Expert'];
@@ -26,16 +26,16 @@ class ProizvodFactory extends Factory
 
         $naziv = fake()->randomElement($naziviKotlova);
         $serija = fake()->randomElement($serije);
-        $model = fake()->randomElement($modeli) . '-' . fake()->numberBetween(100, 999);
+        $model = fake()->randomElement($modeli).'-'.fake()->numberBetween(100, 999);
         $tipGoriva = fake()->randomElement($tipoviGoriva);
 
         // Kombinuj naziv sa serijom (ne uvek, da bude raznovrsnije)
         if (fake()->boolean(60)) {
-            $naziv = $naziv . ' ' . $serija;
+            $naziv = $naziv.' '.$serija;
         }
 
         return [
-            'naziv' => $naziv . ' Kotao',
+            'naziv' => $naziv.' Kotao',
             'model' => $model,
             'tip_goriva' => $tipGoriva,
             'cena' => fake()->randomFloat(2, 80000, 650000),

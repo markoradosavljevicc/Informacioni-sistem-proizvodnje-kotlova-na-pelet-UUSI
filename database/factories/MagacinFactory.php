@@ -19,18 +19,18 @@ class MagacinFactory extends Factory
             'Podgorica, Crna Gora', 'Nikšić, Crna Gora', 'Pljevlja, Crna Gora',
             'Skoplje, Severna Makedonija', 'Bitola, Severna Makedonija', 'Kumanovo, Severna Makedonija',
             'Ljubljana, Slovenija', 'Maribor, Slovenija', 'Celje, Slovenija',
-            'Sarajevo, Bosna i Hercegovina', 'Mostar, Bosna i Hercegovina', 'Zenica, Bosna i Hercegovina'
+            'Sarajevo, Bosna i Hercegovina', 'Mostar, Bosna i Hercegovina', 'Zenica, Bosna i Hercegovina',
         ];
 
         $tipoviMagacina = [
-            'Centralni', 'Regionalni', 'Distributivni', 'Glavni', 'Pomoćni', 'Skladišni'
+            'Centralni', 'Regionalni', 'Distributivni', 'Glavni', 'Pomoćni', 'Skladišni',
         ];
 
         $tip = fake()->randomElement($tipoviMagacina);
         $lokacija = fake()->randomElement($balkanskiGradovi);
 
         return [
-            'naziv' => $tip . ' Magacin',
+            'naziv' => $tip.' Magacin',
             'lokacija' => $lokacija,
         ];
     }

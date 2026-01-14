@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Kupac;
-use App\Models\Narudzbina;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +18,7 @@ class NarudzbinaUseCaseTest extends TestCase
     {
         // Kreiraj test korisnika sa 'user' ulogom
         $user = \App\Models\User::factory()->create(['role' => 'user']);
-        
+
         // Kreiraj test kupca sa istim email-om kao user
         $kupac = Kupac::factory()->create([
             'ime' => 'Milan',
