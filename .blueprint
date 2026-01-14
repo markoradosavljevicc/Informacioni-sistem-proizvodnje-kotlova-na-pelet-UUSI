@@ -1,0 +1,40 @@
+created:
+    - app/Http/Controllers/KupacController.php
+    - app/Http/Controllers/NarudzbinaController.php
+    - app/Http/Controllers/ProizvodController.php
+    - app/Http/Controllers/ServisController.php
+    - database/factories/KupacFactory.php
+    - database/factories/NarudzbinaFactory.php
+    - database/factories/StavkaNarudzbineFactory.php
+    - database/factories/ProizvodFactory.php
+    - database/factories/MagacinFactory.php
+    - database/factories/ServisFactory.php
+    - database/migrations/2026_01_12_223223_create_kupacs_table.php
+    - database/migrations/2026_01_12_223224_create_narudzbinas_table.php
+    - database/migrations/2026_01_12_223225_create_stavka_narudzbines_table.php
+    - database/migrations/2026_01_12_223226_create_proizvods_table.php
+    - database/migrations/2026_01_12_223227_create_magacins_table.php
+    - database/migrations/2026_01_12_223228_create_servis_table.php
+    - app/Models/Kupac.php
+    - app/Models/Narudzbina.php
+    - app/Models/StavkaNarudzbine.php
+    - app/Models/Proizvod.php
+    - app/Models/Magacin.php
+    - app/Models/Servis.php
+    - tests/Feature/Http/Controllers/KupacControllerTest.php
+    - tests/Feature/Http/Controllers/NarudzbinaControllerTest.php
+    - tests/Feature/Http/Controllers/ProizvodControllerTest.php
+    - tests/Feature/Http/Controllers/ServisControllerTest.php
+    - app/Http/Requests/NarudzbinaStoreRequest.php
+    - app/Http/Requests/NarudzbinaUpdateRequest.php
+    - app/Http/Requests/ServiStoreRequest.php
+    - app/Http/Requests/ServiUpdateRequest.php
+updated:
+    - routes/web.php
+models:
+    Kupac: { id: id, ime: string, prezime: string, email: 'string:unique', telefon: 'string:nullable', adresa: 'string:nullable', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { hasMany: 'Narudzbina Servis' } }
+    Narudzbina: { id: id, kupac_id: 'id:foreign:kupac,id', datum_narudzbine: date, rok_isporuke: 'date:nullable', status: "string:default,'kreirana'", ukupna_cena: 'decimal:8,2', napomena: 'text:nullable', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { belongsTo: Kupac, hasMany: StavkaNarudzbine } }
+    StavkaNarudzbine: { id: id, narudzbina_id: 'id:foreign:narudzbina,id', proizvod_id: 'id:foreign:proizvod,id', kolicina: 'integer:default,1', cena_jedinice: 'decimal:8,2', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { belongsTo: 'Narudzbina Proizvod' } }
+    Proizvod: { id: id, naziv: string, model: 'string:nullable', tip_goriva: 'string:nullable', cena: 'decimal:8,2', na_stanju: 'integer:default,0', magacin_id: 'id:foreign:magacin,id:nullable', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { belongsTo: Magacin, hasMany: 'StavkaNarudzbine Servis' } }
+    Magacin: { id: id, naziv: string, lokacija: 'string:nullable', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { hasMany: Proizvod } }
+    Servis: { id: id, kupac_id: 'id:foreign:kupac,id', proizvod_id: 'id:foreign:proizvod,id', datum_prijave: date, datum_zavrsetka: 'date:nullable', opis_kvara: 'text:nullable', opis_popravke: 'text:nullable', status: "string:default,'prijavljen'", serviser_id: 'id:foreign:users,id:nullable', created_at: 'timestamp:nullable', updated_at: 'timestamp:nullable', relationships: { belongsTo: 'Kupac Proizvod User:serviser' } }

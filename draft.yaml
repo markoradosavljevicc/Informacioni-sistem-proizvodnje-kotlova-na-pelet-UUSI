@@ -1,0 +1,115 @@
+models:
+  Kupac:
+    id: id
+    ime: string
+    prezime: string
+    email: string:unique
+    telefon: string:nullable
+    adresa: string:nullable
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      hasMany:
+        - Narudzbina
+        - Servis
+
+  Narudzbina:
+    id: id
+    kupac_id: id:foreign:kupac,id
+    datum_narudzbine: date
+    rok_isporuke: date:nullable
+    status: string:default,'kreirana'
+    ukupna_cena: decimal:8,2
+    napomena: text:nullable
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      belongsTo: Kupac
+      hasMany:
+        - StavkaNarudzbine
+
+  StavkaNarudzbine:
+    id: id
+    narudzbina_id: id:foreign:narudzbina,id
+    proizvod_id: id:foreign:proizvod,id
+    kolicina: integer:default,1
+    cena_jedinice: decimal:8,2
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      belongsTo:
+        - Narudzbina
+        - Proizvod
+
+  Proizvod:
+    id: id
+    naziv: string
+    model: string:nullable
+    tip_goriva: string:nullable
+    cena: decimal:8,2
+    na_stanju: integer:default,0
+    magacin_id: id:foreign:magacin,id:nullable
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      belongsTo: Magacin
+      hasMany:
+        - StavkaNarudzbine
+        - Servis
+
+  Magacin:
+    id: id
+    naziv: string
+    lokacija: string:nullable
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      hasMany: Proizvod
+
+  Servis:
+    id: id
+    kupac_id: id:foreign:kupac,id
+    proizvod_id: id:foreign:proizvod,id
+    datum_prijave: date
+    datum_zavrsetka: date:nullable
+    opis_kvara: text:nullable
+    opis_popravke: text:nullable
+    status: string:default,'prijavljen'
+    serviser_id: id:foreign:users,id:nullable
+    created_at: timestamp:nullable
+    updated_at: timestamp:nullable
+    relationships:
+      belongsTo:
+        - Kupac
+        - Proizvod
+        - User:serviser
+
+controllers:
+  KupacController:
+    resource: Kupac
+
+  NarudzbinaController:
+    resource: Narudzbina
+    store:
+      validate: kupac_id, datum_narudzbine, rok_isporuke, ukupna_cena
+      save: narudzbina
+      redirect: narudzbina.index
+    update:
+      validate: kupac_id, datum_narudzbine, rok_isporuke, ukupna_cena
+      save: narudzbina
+      redirect: narudzbina.index
+
+  ProizvodController:
+    resource: Proizvod
+
+  ServisController:
+    resource: Servis
+    store:
+      validate: kupac_id, proizvod_id, datum_prijave, opis_kvara
+      save: servis
+      redirect: servis.index
+    update:
+      validate: kupac_id, proizvod_id, datum_prijave, opis_kvara
+      save: servis
+      redirect: servis.index
+
